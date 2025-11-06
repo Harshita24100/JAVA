@@ -1,0 +1,39 @@
+Part (c): Transaction Management Using Spring + Hibernate
+
+Objective:
+Simulate a bank transfer system ensuring atomic transactions using @Transactional.
+
+Steps:
+
+Entities
+
+Account → represents a user account with balance.
+
+Transaction → logs money transfers.
+
+Service Layer
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+public class BankService {
+    @Transactional
+    public void transferMoney(int fromAccId, int toAccId, double amount) {
+        Account from = accountDao.getAccount(fromAccId);
+        Account to = accountDao.getAccount(toAccId);
+
+        from.setBalance(from.getBalance() - amount);
+        to.setBalance(to.getBalance() + amount);
+
+        accountDao.updateAccount(from);
+        accountDao.updateAccount(to);
+    }
+}
+
+
+Spring Configuration
+
+Use @EnableTransactionManagement and a Hibernate SessionFactory bean.
+
+Ensure a rollback happens automatically if any exception occurs.
