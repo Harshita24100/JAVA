@@ -1,0 +1,77 @@
+Part (b): Hibernate Application for Student CRUD Operations
+
+Objective:
+Perform Create, Read, Update, Delete (CRUD) operations on a Student entity using Hibernate.
+
+Steps to Implement:
+
+Student Entity
+
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "students")
+public class Student {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
+
+    @Column(name = "name")
+    private String name;
+
+    @Column(name = "course")
+    private String course;
+
+    // Constructors, getters, setters
+}
+
+
+Hibernate Configuration (hibernate.cfg.xml)
+
+<!DOCTYPE hibernate-configuration PUBLIC "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+    "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+    <session-factory>
+        <property name="hibernate.connection.driver_class">com.mysql.cj.jdbc.Driver</property>
+        <property name="hibernate.connection.url">jdbc:mysql://localhost:3306/springdb</property>
+        <property name="hibernate.connection.username">root</property>
+        <property name="hibernate.connection.password">yourpassword</property>
+        <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
+        <property name="hibernate.hbm2ddl.auto">update</property>
+        <mapping class="com.example.Student"/>
+    </session-factory>
+</hibernate-configuration>
+
+
+CRUD Operations Example
+
+import org.hibernate.*;
+import org.hibernate.cfg.Configuration;
+
+public class StudentCRUD {
+    public static void main(String[] args) {
+        SessionFactory factory = new Configuration().configure().buildSessionFactory();
+        Session session = factory.openSession();
+        Transaction tx = session.beginTransaction();
+
+        // Create
+        Student s1 = new Student();
+        s1.setName("Harshita");
+        s1.setCourse("Java");
+        session.save(s1);
+
+        // Read
+        Student s2 = session.get(Student.class, 1);
+        System.out.println("Fetched: " + s2.getName());
+
+        // Update
+        s2.setCourse("Spring Boot");
+        session.update(s2);
+
+        // Delete
+        session.delete(s2);
+
+        tx.commit();
+        session.close();
+    }
+}
